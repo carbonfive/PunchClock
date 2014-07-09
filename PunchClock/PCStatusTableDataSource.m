@@ -10,6 +10,7 @@
 #import "PCStatusLabel.h"
 #import <AFNetworking/AFNetworking.h>
 #import <AFNetworking/UIImageView+AFNetworking.h>
+#import <CommonCrypto/CommonDigest.h>
 
 @interface PCStatusTableDataSource()
 
@@ -49,14 +50,14 @@ static NSString *cellIdentifier = @"StatusTableCell";
 
 	self.fetchingPeople = YES;
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *username = [defaults stringForKey:@"username"];
+	NSString *email = [defaults stringForKey:@"email"];
 
 	AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:PCbaseURL]];
 	[manager.requestSerializer setAuthorizationHeaderFieldWithUsername:backendUsername password:backendPassword];
 
 	NSMutableURLRequest *request = [manager.requestSerializer requestWithMethod:@"GET"
 																	  URLString:[NSString stringWithFormat:@"%@/status/list", PCbaseURL]
-																	 parameters:@{@"name": username}
+																	 parameters:@{@"name": email}
 																		  error:nil];
 
 
@@ -113,11 +114,20 @@ static NSString *cellIdentifier = @"StatusTableCell";
 		NSDictionary *person = self.allPeople[indexPath.row];
 
 		// Image
-		NSString *username = [person objectForKey:@"name"];
-		NSString *imageURL = [NSString stringWithFormat:@"%@/image/%@", PCbaseURL, username];
+		NSString *email = [person objectForKey:@"name"];
+        
+        const char *cStr = [email UTF8String];
+        unsigned char digest[16];
+        CC_MD5( cStr, strlen(cStr), digest ); // This is the md5 call
+        
+        NSMutableString *md5Hash = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+        
+        for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
+            [md5Hash appendFormat:@"%02x", digest[i]];
+        
+		NSString *imageURL = [NSString stringWithFormat:@"http://www.gravatar.com/avatar/%@", md5Hash];
 
 		AFHTTPRequestSerializer *serializer = [AFHTTPRequestSerializer serializer];
-		[serializer setAuthorizationHeaderFieldWithUsername:backendUsername password:backendPassword];
 		NSMutableURLRequest *URLRequest = [serializer requestWithMethod:@"GET" URLString:imageURL parameters:nil error:nil];
 
 
@@ -131,7 +141,7 @@ static NSString *cellIdentifier = @"StatusTableCell";
 								  }];
 
 		// Name label
-		NSString *personLabel = [username capitalizedString];
+		NSString *personLabel = [[[email componentsSeparatedByString:@"@"] firstObject] capitalizedString];
 		[(UILabel *)[cell viewWithTag:1] setText:personLabel];
 
 		// Status

@@ -82,14 +82,14 @@
 	NSString *action = sender.selected ? @"unwatch" : @"watch";
 
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *username = [defaults stringForKey:@"username"];
+	NSString *email = [defaults stringForKey:@"email"];
 
 	AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:PCbaseURL]];
 	[manager.requestSerializer setAuthorizationHeaderFieldWithUsername:backendUsername password:backendPassword];
 
 	NSMutableURLRequest *request = [manager.requestSerializer requestWithMethod:@"POST"
 																	  URLString:[NSString stringWithFormat:@"%@/%@/%@", PCbaseURL, action, name]
-																	 parameters:@{@"name": username}
+																	 parameters:@{@"name": email}
 																		  error:nil];
 
 
@@ -134,9 +134,9 @@
 											   object:nil];
 
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *username = [defaults stringForKey:@"username"];
+	NSString *email = [defaults stringForKey:@"email"];
 
-	if ([username isEqualToString:@""]) {
+	if ([email isEqualToString:@""]) {
 		[self performSegueWithIdentifier:@"missingNameStatus" sender:self];
 	}
 

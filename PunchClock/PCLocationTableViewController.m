@@ -90,7 +90,7 @@
 
 	} else if (object == [NSUserDefaults standardUserDefaults]) {
 
-		if ([keyPath isEqualToString:@"username"]) {
+		if ([keyPath isEqualToString:@"email"]) {
 			NSString *newValue = (NSString *)[change objectForKey:NSKeyValueChangeNewKey];
 
 			self.nameLabel.text = newValue;
@@ -123,7 +123,7 @@
 
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-	[defaults addObserver:self forKeyPath:@"username" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial ) context:NULL];
+	[defaults addObserver:self forKeyPath:@"email" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial ) context:NULL];
 
 }
 
@@ -137,7 +137,7 @@
 	[self.locationManager removeObserver:self forKeyPath:@"officeDistance"];
 	[self.locationManager removeObserver:self forKeyPath:@"locationStatus"];
 	[self.locationManager removeObserver:self forKeyPath:@"closestBeacon"];
-	[[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"username"];
+	[[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:@"email"];
 }
 
 - (void)didReceiveMemoryWarning

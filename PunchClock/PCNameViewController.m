@@ -11,7 +11,7 @@
 
 
 @interface PCNameViewController()
-@property (strong, nonatomic) IBOutlet UITextField *nameField;
+@property (strong, nonatomic) IBOutlet UITextField *emailField;
 
 @end
 
@@ -19,10 +19,10 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-	self.nameField.layer.cornerRadius = 3.0;
+	self.emailField.layer.cornerRadius = 3.0;
 	
-	self.nameField.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"username"];
-	[self.nameField becomeFirstResponder];
+	self.emailField.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"email"];
+	[self.emailField becomeFirstResponder];
 }
 
 #pragma mark - UITextFieldDelegate
@@ -43,7 +43,7 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
 	if (![textField.text isEqualToString:@""]) {
-		[[NSUserDefaults standardUserDefaults] setObject:textField.text forKey:@"username"];
+		[[NSUserDefaults standardUserDefaults] setObject:textField.text forKey:@"email"];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 
 		[self mz_dismissFormSheetControllerAnimated:YES completionHandler:nil];

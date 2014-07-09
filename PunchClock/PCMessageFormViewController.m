@@ -34,7 +34,7 @@
 	DDLogInfo(@"Sending '%@' to all who are In", message);
 
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *username = [defaults stringForKey:@"username"];
+	NSString *email = [defaults stringForKey:@"email"];
 
 	AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:PCbaseURL]];
 	[manager.requestSerializer setAuthorizationHeaderFieldWithUsername:backendUsername password:backendPassword];
@@ -42,7 +42,7 @@
 	NSMutableURLRequest *request = [manager.requestSerializer requestWithMethod:@"POST"
 																	  URLString:[NSString stringWithFormat:@"%@/message/in", PCbaseURL]
 																	 parameters:@{@"message": message,
-																				  @"name": username}
+																				  @"name": email}
 																		  error:nil];
 
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];

@@ -81,7 +81,7 @@
 
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-		[defaults addObserver:self forKeyPath:@"username" options:NSKeyValueObservingOptionNew context:NULL];
+		[defaults addObserver:self forKeyPath:@"email" options:NSKeyValueObservingOptionNew context:NULL];
 
 		self.dispatchGroup = dispatch_group_create();
 
@@ -94,7 +94,7 @@
 
 - (void)dealloc
 {
-	[self removeObserver:self forKeyPath:@"username"];
+	[self removeObserver:self forKeyPath:@"email"];
 }
 
 - (BOOL)canTrackLocation
@@ -194,7 +194,7 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	if ([keyPath isEqualToString:@"username"]) {
+	if ([keyPath isEqualToString:@"email"]) {
 		[self updateLocationStatusOnTimer];
 	} else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -260,15 +260,15 @@
 	isInBackground = [UIApplication sharedApplication].applicationState == UIApplicationStateBackground;
 
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *username = [defaults stringForKey:@"username"];
+	NSString *email = [defaults stringForKey:@"email"];
 	NSString *push_id = [defaults stringForKey:@"push_id"];
 
-	if ([username isEqualToString:@""]) {
-		DDLogError(@"missing username, doing nothing");
+	if ([email isEqualToString:@""]) {
+		DDLogError(@"missing email, doing nothing");
 		return;
 	}
 
-	DDLogInfo(@"Sending update for %@:%@ in background:%i.", username, status, isInBackground);
+	DDLogInfo(@"Sending update for %@:%@ in background:%i.", email, status, isInBackground);
 
 	AFHTTPRequestOperationManager *manager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:[NSURL URLWithString:PCbaseURL]];
 	[manager.requestSerializer setAuthorizationHeaderFieldWithUsername:backendUsername password:backendPassword];
@@ -282,7 +282,7 @@
 	NSMutableURLRequest *request = [manager.requestSerializer requestWithMethod:@"POST"
 																	  URLString:[NSString stringWithFormat:@"%@/status/update", PCbaseURL]
 																	 parameters:@{@"status": status,
-																				  @"name": username,
+																				  @"name": email,
 																				  @"push_id": push_id,
 																				  @"beacon_minor": beacon_minor}
 																		  error:nil];

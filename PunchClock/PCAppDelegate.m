@@ -51,12 +51,12 @@
 
 	// Default Settings
 	NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithCapacity:1];
-	[settings setObject:@"" forKey:@"username"];
+	[settings setObject:@"" forKey:@"email"];
 	[settings setObject:@"" forKey:@"push_id"];
 
 	[[NSUserDefaults standardUserDefaults] registerDefaults:settings];
 
-	[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:@"username" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
+	[[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:@"email" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
 
 	self.locationManager = [PCLocationManager sharedLocationManager];
 
@@ -80,7 +80,7 @@
 {
 	if (object == [NSUserDefaults standardUserDefaults]) {
 
-		if ([keyPath isEqualToString:@"username"]) {
+		if ([keyPath isEqualToString:@"email"]) {
 			[self syncPreferencesWithKeychain];
 		}
 
@@ -92,25 +92,25 @@
 - (void)syncPreferencesWithKeychain
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	NSString *username = [defaults stringForKey:@"username"];
+	NSString *email = [defaults stringForKey:@"email"];
 
 	NSString *serviceName = keychainID;
 
-	KeychainItemWrapper *personKeychainItem = [[KeychainItemWrapper alloc] initWithIdentifier:@"Username" accessGroup:nil];
+	KeychainItemWrapper *personKeychainItem = [[KeychainItemWrapper alloc] initWithIdentifier:@"Email" accessGroup:nil];
 
-	[personKeychainItem setObject:@"pcUsername" forKey:(__bridge id) kSecAttrAccount];
+	[personKeychainItem setObject:@"pcEmail" forKey:(__bridge id) kSecAttrAccount];
 	[personKeychainItem setObject:serviceName forKey:(__bridge id) kSecAttrService];
-	NSString *kcUsername = [personKeychainItem objectForKey:((__bridge id) kSecValueData)];
+	NSString *kcEmail = [personKeychainItem objectForKey:((__bridge id) kSecValueData)];
 
-	if (![username isEqualToString:@""] && ![username isEqualToString:kcUsername]) {
+	if (![email isEqualToString:@""] && ![email isEqualToString:kcEmail]) {
 		// If it's in the Prefs and it's different from what's in the keychain
-		DDLogDebug(@"Pushing username to keychain");
-		[personKeychainItem setObject:username forKey:(__bridge id) kSecValueData];
+		DDLogDebug(@"Pushing email to keychain");
+		[personKeychainItem setObject:email forKey:(__bridge id) kSecValueData];
 
-	} else if ([username isEqualToString:@""] && kcUsername) {
+	} else if ([email isEqualToString:@""] && kcEmail) {
 		// If its in the keychain but not in the prefs
-		DDLogDebug(@"Username missing from prefs, fetching from Keychain: %@", kcUsername);
-		[defaults setObject:kcUsername forKey:@"username"];
+		DDLogDebug(@"Email missing from prefs, fetching from Keychain: %@", kcEmail);
+		[defaults setObject:kcEmail forKey:@"email"];
 	}
 
 	[defaults synchronize];
